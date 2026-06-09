@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pawan Kumar | CSE Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --card: #1a2236;
+      --border: #1e2d45;
+      --cyan: #00f5ff;
+      --purple: #a855f7;
+      --green: #10f08a;
+      --orange: #ff6b35;
+      --pink: #ff2d78;
+      --yellow: #ffd60a;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --font: 'Space Grotesk', sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); overflow-x: hidden; }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 10px; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: rgba(10,14,26,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 2rem;
+    }
+    .nav-logo { font-family: var(--mono); color: var(--cyan); font-size: 1.1rem; font-weight: 700; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--cyan); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: center; align-items: flex-start;
+      padding: 8rem 2rem 4rem; max-width: 1100px; margin: 0 auto;
+      position: relative;
+    }
+    .hero-tag {
+      font-family: var(--mono); color: var(--green); font-size: 0.85rem;
+      background: rgba(16,240,138,0.1); border: 1px solid rgba(16,240,138,0.3);
+      padding: 0.3rem 0.8rem; border-radius: 4px; margin-bottom: 1.5rem;
+      display: inline-block;
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 700; line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+    .hero h1 span.cyan { color: var(--cyan); }
+    .hero h1 span.purple { color: var(--purple); }
+    .hero-sub {
+      font-size: 1.15rem; color: var(--muted); max-width: 600px;
+      line-height: 1.7; margin-bottom: 2rem;
+    }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--cyan); color: var(--bg); padding: 0.75rem 1.8rem;
+      border-radius: 6px; font-weight: 700; font-size: 0.95rem;
+      text-decoration: none; transition: all 0.3s; border: none; cursor: pointer;
+    }
+    .btn-primary:hover { background: #00d4e0; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,245,255,0.3); }
+    .btn-outline {
+      border: 1.5px solid var(--purple); color: var(--purple); padding: 0.75rem 1.8rem;
+      border-radius: 6px; font-weight: 600; font-size: 0.95rem;
+      text-decoration: none; transition: all 0.3s; background: transparent; cursor: pointer;
+    }
+    .btn-outline:hover { background: rgba(168,85,247,0.1); transform: translateY(-2px); }
+
+    .hero-grid {
+      position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+      opacity: 0.07; font-family: var(--mono); font-size: 0.7rem; color: var(--cyan);
+      line-height: 1.6; pointer-events: none;
+    }
+
+    /* SECTIONS */
+    section { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-family: var(--mono); color: var(--cyan); font-size: 0.8rem;
+      letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem;
+    }
+    .section-title { font-size: 2rem; font-weight: 700; margin-bottom: 3rem; }
+    .section-title span { color: var(--purple); }
+    .divider { width: 100%; height: 1px; background: var(--border); margin: 0; }
+
+    /* ABOUT */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+    .about-text p { color: var(--muted); line-height: 1.8; margin-bottom: 1rem; }
+    .about-text p span { color: var(--cyan); font-weight: 600; }
+    .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 1.2rem; text-align: center;
+    }
+    .stat-num { font-size: 1.8rem; font-weight: 700; color: var(--cyan); font-family: var(--mono); }
+    .stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 0.3rem; }
+
+    /* SKILLS */
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+    .skill-category {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem;
+      transition: border-color 0.3s;
+    }
+    .skill-category:hover { border-color: var(--cyan); }
+    .skill-cat-title { font-size: 0.8rem; font-family: var(--mono); margin-bottom: 1rem; }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .skill-tag {
+      padding: 0.3rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+    }
+    .tag-cyan { background: rgba(0,245,255,0.1); color: var(--cyan); border: 1px solid rgba(0,245,255,0.25); }
+    .tag-purple { background: rgba(168,85,247,0.1); color: var(--purple); border: 1px solid rgba(168,85,247,0.25); }
+    .tag-green { background: rgba(16,240,138,0.1); color: var(--green); border: 1px solid rgba(16,240,138,0.25); }
+    .tag-orange { background: rgba(255,107,53,0.1); color: var(--orange); border: 1px solid rgba(255,107,53,0.25); }
+
+    /* PROJECTS */
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+    .project-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 1.8rem; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .project-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: var(--accent, var(--cyan)); transition: height 0.3s;
+    }
+    .project-card:hover { transform: translateY(-5px); border-color: var(--accent, var(--cyan)); box-shadow: 0 15px 40px rgba(0,0,0,0.4); }
+    .project-card:hover::before { height: 4px; }
+    .project-icon { font-size: 2rem; margin-bottom: 1rem; }
+    .project-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .project-desc { color: var(--muted); font-size: 0.88rem; line-height: 1.6; margin-bottom: 1.2rem; }
+    .project-techs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.2rem; }
+    .tech-badge {
+      font-family: var(--mono); font-size: 0.72rem; padding: 0.2rem 0.6rem;
+      border-radius: 4px; background: rgba(255,255,255,0.05); color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .project-link {
+      font-size: 0.82rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;
+      transition: gap 0.2s;
+    }
+    .project-link:hover { gap: 0.7rem; }
+
+    /* EXPERIENCE */
+    .timeline { position: relative; padding-left: 2rem; }
+    .timeline::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 2px; background: linear-gradient(to bottom, var(--cyan), var(--purple));
+    }
+    .timeline-item { position: relative; margin-bottom: 2.5rem; }
+    .timeline-item::before {
+      content: ''; position: absolute; left: -2.38rem; top: 0.3rem;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--cyan); border: 2px solid var(--bg); box-shadow: 0 0 10px var(--cyan);
+    }
+    .timeline-date { font-family: var(--mono); font-size: 0.75rem; color: var(--cyan); margin-bottom: 0.3rem; }
+    .timeline-role { font-size: 1.1rem; font-weight: 700; }
+    .timeline-company { color: var(--purple); font-size: 0.9rem; margin-bottom: 0.8rem; }
+    .timeline-desc { color: var(--muted); font-size: 0.88rem; line-height: 1.7; }
+    .timeline-desc li { margin-bottom: 0.4rem; }
+
+    /* CERTIFICATIONS */
+    .cert-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+    .cert-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 1.2rem 1.5rem; display: flex; align-items: center; gap: 1rem;
+      transition: all 0.3s;
+    }
+    .cert-card:hover { border-color: var(--green); transform: translateX(5px); }
+    .cert-icon { font-size: 1.8rem; }
+    .cert-name { font-size: 0.9rem; font-weight: 600; }
+    .cert-org { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }
+
+    /* CONTACT */
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+    .contact-info p { color: var(--muted); line-height: 1.8; margin-bottom: 2rem; }
+    .contact-links { display: flex; flex-direction: column; gap: 1rem; }
+    .contact-link {
+      display: flex; align-items: center; gap: 1rem; color: var(--text);
+      text-decoration: none; padding: 0.8rem 1rem; border-radius: 8px;
+      background: var(--card); border: 1px solid var(--border); transition: all 0.3s;
+    }
+    .contact-link:hover { border-color: var(--cyan); color: var(--cyan); }
+    .contact-link span { font-size: 1.2rem; }
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+    .contact-form input, .contact-form textarea {
+      background: var(--card); border: 1px solid var(--border); color: var(--text);
+      padding: 0.9rem 1rem; border-radius: 8px; font-family: var(--font); font-size: 0.9rem;
+      transition: border-color 0.3s; outline: none;
+    }
+    .contact-form input:focus, .contact-form textarea:focus { border-color: var(--cyan); }
+    .contact-form textarea { min-height: 120px; resize: vertical; }
+
+    /* FOOTER */
+    footer {
+      text-align: center; padding: 2rem; border-top: 1px solid var(--border);
+      color: var(--muted); font-size: 0.85rem; font-family: var(--mono);
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+      z-index: 1000; display: flex; justify-content: center; align-items: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+      max-width: 720px; width: 90%; max-height: 85vh; overflow-y: auto;
+      padding: 2.5rem; position: relative; transform: scale(0.95); transition: transform 0.3s;
+    }
+    .modal-overlay.active .modal { transform: scale(1); }
+    .modal-close {
+      position: absolute; top: 1rem; right: 1.2rem; background: none; border: none;
+      color: var(--muted); font-size: 1.5rem; cursor: pointer; transition: color 0.3s;
+    }
+    .modal-close:hover { color: var(--pink); }
+    .modal-top { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+    .modal-icon { font-size: 2.5rem; }
+    .modal-title { font-size: 1.4rem; font-weight: 700; }
+    .modal-subtitle { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
+    .modal-section { margin-bottom: 1.5rem; }
+    .modal-section h4 { font-size: 0.8rem; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.8rem; }
+    .modal-section p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; }
+    .modal-section ul { color: var(--muted); font-size: 0.9rem; line-height: 1.8; padding-left: 1.2rem; }
+    .modal-techs { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .modal-preview {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 1rem; margin-top: 1rem; text-align: center;
+    }
+    .modal-preview-btn {
+      display: inline-block; margin-top: 0.8rem; padding: 0.6rem 1.4rem;
+      background: var(--cyan); color: var(--bg); border-radius: 6px;
+      font-weight: 700; font-size: 0.85rem; text-decoration: none; cursor: pointer; border: none;
+      transition: all 0.3s;
+    }
+    .modal-preview-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,245,255,0.3); }
+
+    /* GLOW BG BLOBS */
+    .blob {
+      position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.06; pointer-events: none; z-index: 0;
+    }
+    .blob1 { width: 500px; height: 500px; background: var(--cyan); top: -100px; right: -100px; }
+    .blob2 { width: 400px; height: 400px; background: var(--purple); bottom: 100px; left: -100px; }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem; }
+      .nav-links { display: none; }
+      .about-grid, .contact-grid { grid-template-columns: 1fr; }
+      .hero-grid { display: none; }
+      .hero h1 { font-size: 2.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">&lt;PK /&gt;</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#certifications">Certifications</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <span class="hero-tag">✦ Available for Opportunities</span>
+  <h1>Hi, I'm <span class="cyan">Pawan</span><br/><span class="purple">Kumar</span></h1>
+  <p class="hero-sub">
+    CSE Graduate | Full-Stack Developer | Cybersecurity Enthusiast<br/>
+    Building impactful software with Java, Python, and modern web technologies.
+  </p>
+  <div class="hero-btns">
+    <a href="#projects" class="btn-primary">View My Projects</a>
+    <a href="#contact" class="btn-outline">Let's Connect</a>
+  </div>
+  <div class="hero-grid">
+    01010000 01000001<br/>01010111 01000001<br/>01001110 00100000<br/>01001011 01010101<br/>01001101 01000001<br/>01010010 00100000
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section id="about">
+  <p class="section-label">// about.me</p>
+  <h2 class="section-title">Who Am <span>I?</span></h2>
+  <div class="about-grid">
+    <div class="about-text">
+      <p>I'm a <span>Computer Science & Engineering</span> graduate (2024) from Hi-Tech Institute of Engineering & Technology, Ghaziabad (AKTU). I'm passionate about writing clean, efficient code and building solutions that make a real difference.</p>
+      <p>From developing <span>cybersecurity systems</span> to building <span>full-stack web applications</span>, I love working across the entire stack. I've trained with industry giants like <span>NASSCOM, DXC Technologies, Cisco,</span> and completed hands-on internships.</p>
+      <p>Currently expanding my expertise in <span>data analytics</span> and <span>system design</span> while contributing to real-world projects.</p>
+    </div>
+    <div class="about-stats">
+      <div class="stat-card">
+        <div class="stat-num">3+</div>
+        <div class="stat-label">Projects Built</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">5+</div>
+        <div class="stat-label">Technologies</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">4</div>
+        <div class="stat-label">Certifications</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">2024</div>
+        <div class="stat-label">B.Tech Graduate</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <p class="section-label">// tech.stack</p>
+  <h2 class="section-title">My <span>Skills</span></h2>
+  <div class="skills-grid">
+    <div class="skill-category">
+      <div class="skill-cat-title" style="color:var(--cyan)">⚡ Programming Languages</div>
+      <div class="skill-tags">
+        <span class="skill-tag tag-cyan">Java</span>
+        <span class="skill-tag tag-cyan">Python</span>
+        <span class="skill-tag tag-cyan">C</span>
+        <span class="skill-tag tag-cyan">SQL</span>
+      </div>
+    </div>
+    <div class="skill-category">
+      <div class="skill-cat-title" style="color:var(--purple)">🌐 Web Development</div>
+      <div class="skill-tags">
+        <span class="skill-tag tag-purple">HTML</span>
+        <span class="skill-tag tag-purple">CSS</span>
+        <span class="skill-tag tag-purple">PHP</span>
+        <span class="skill-tag tag-purple">Full-Stack</span>
+      </div>
+    </div>
+    <div class="skill-category">
+      <div class="skill-cat-title" style="color:var(--green)">📊 Data Analytics</div>
+      <div class="skill-tags">
+        <span class="skill-tag tag-green">Pandas</span>
+        <span class="skill-tag tag-green">NumPy</span>
+        <span class="skill-tag tag-green">Matplotlib</span>
+      </div>
+    </div>
+    <div class="skill-category">
+      <div class="skill-cat-title" style="color:var(--orange)">🔐 Core Areas</div>
+      <div class="skill-tags">
+        <span class="skill-tag tag-orange">Cybersecurity</span>
+        <span class="skill-tag tag-orange">Database Mgmt</span>
+        <span class="skill-tag tag-orange">Problem Solving</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <p class="section-label">// my.projects</p>
+  <h2 class="section-title">What I've <span>Built</span></h2>
+  <div class="projects-grid">
+
+    <div class="project-card" style="--accent: var(--cyan)" onclick="openModal('crypto')">
+      <div class="project-icon">🔐</div>
+      <div class="project-title">Encryption & Decryption System</div>
+      <div class="project-desc">A Python-based cybersecurity tool for secure data encryption and decryption to protect sensitive information.</div>
+      <div class="project-techs">
+        <span class="tech-badge">Python</span>
+        <span class="tech-badge">Cryptography</span>
+        <span class="tech-badge">Cybersecurity</span>
+      </div>
+      <div class="project-link" style="color:var(--cyan)">View Details →</div>
+    </div>
+
+    <div class="project-card" style="--accent: var(--green)" onclick="openModal('herbal')">
+      <div class="project-icon">🌿</div>
+      <div class="project-title">Herbal Brand Shopping Website</div>
+      <div class="project-desc">A full e-commerce platform for herbal products — browse, search, and purchase with a clean, responsive UI.</div>
+      <div class="project-techs">
+        <span class="tech-badge">Java</span>
+        <span class="tech-badge">SQL</span>
+        <span class="tech-badge">HTML/CSS</span>
+        <span class="tech-badge">Full-Stack</span>
+      </div>
+      <div class="project-link" style="color:var(--green)">View Frontend →</div>
+    </div>
+
+    <div class="project-card" style="--accent: var(--orange)" onclick="openModal('doctor')">
+      <div class="project-icon">🏥</div>
+      <div class="project-title">Find My Doctor</div>
+      <div class="project-desc">A location-based healthcare web app that helps users quickly find nearby doctors in emergencies or while traveling.</div>
+      <div class="project-techs">
+        <span class="tech-badge">PHP</span>
+        <span class="tech-badge">HTML/CSS</span>
+        <span class="tech-badge">JavaScript</span>
+        <span class="tech-badge">MySQL</span>
+      </div>
+      <div class="project-link" style="color:var(--orange)">View Frontend →</div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <p class="section-label">// work.exp</p>
+  <h2 class="section-title">My <span>Experience</span></h2>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-date">JUL 2023 – AUG 2023</div>
+      <div class="timeline-role">Java Full Stack Intern</div>
+      <div class="timeline-company">Agile Soft Tech</div>
+      <ul class="timeline-desc">
+        <li>Collaborated with dev team on a product-based website using Java technologies</li>
+        <li>Built backend logic, database connectivity, and responsive web components</li>
+        <li>Completed hands-on Java Full Stack training under NASSCOM & DXC Technologies</li>
+      </ul>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">2024 – PRESENT</div>
+      <div class="timeline-role">Apprentice</div>
+      <div class="timeline-company">Concentrix Daksh Services India Pvt. Ltd.</div>
+      <ul class="timeline-desc">
+        <li>Working in a professional enterprise environment, Gurgaon</li>
+        <li>Gaining hands-on industry experience in a fast-paced tech-driven setting</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CERTIFICATIONS -->
+<section id="certifications">
+  <p class="section-label">// certs.&.training</p>
+  <h2 class="section-title">Certifications & <span>Training</span></h2>
+  <div class="cert-grid">
+    <div class="cert-card">
+      <span class="cert-icon">🔵</span>
+      <div>
+        <div class="cert-name">Cybersecurity Certification</div>
+        <div class="cert-org">Cisco</div>
+      </div>
+    </div>
+    <div class="cert-card">
+      <span class="cert-icon">📊</span>
+      <div>
+        <div class="cert-name">Data Analytics Certification</div>
+        <div class="cert-org">Udemy</div>
+      </div>
+    </div>
+    <div class="cert-card">
+      <span class="cert-icon">☕</span>
+      <div>
+        <div class="cert-name">Java Full Stack Developer</div>
+        <div class="cert-org">NASSCOM & DXC Technologies</div>
+      </div>
+    </div>
+    <div class="cert-card">
+      <span class="cert-icon">🚔</span>
+      <div>
+        <div class="cert-name">Cybersecurity Workshop</div>
+        <div class="cert-org">UP Police & UP Government</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <p class="section-label">// get.in.touch</p>
+  <h2 class="section-title">Let's <span>Connect</span></h2>
+  <div class="contact-grid">
+    <div class="contact-info">
+      <p>I'm open to new opportunities, collaborations, and interesting tech conversations. Feel free to reach out!</p>
+      <div class="contact-links">
+        <a href="mailto:pawan.kr4380@gmail.com" class="contact-link">
+          <span>📧</span> pawan.kr4380@gmail.com
+        </a>
+        <a href="tel:+918368774380" class="contact-link">
+          <span>📞</span> +91-8368774380
+        </a>
+        <a href="https://linkedin.com/in/pawan-kumar-986b6719a" target="_blank" class="contact-link">
+          <span>💼</span> linkedin.com/in/pawan-kumar-986b6719a
+        </a>
+        <a href="#" class="contact-link">
+          <span>📍</span> Nangloi, New Delhi
+        </a>
+      </div>
+    </div>
+    <div class="contact-form">
+      <input type="text" placeholder="Your Name" />
+      <input type="email" placeholder="Your Email" />
+      <textarea placeholder="Your Message..."></textarea>
+      <button class="btn-primary" onclick="alert('Message sent! I will get back to you soon 🚀')">Send Message</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Designed & Built by <span style="color:var(--cyan)">Pawan Kumar</span> • &lt;/&gt; with ❤️</p>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+const projects = {
+  crypto: {
+    icon: '🔐',
+    title: 'Encryption & Decryption System',
+    subtitle: 'Python · Cybersecurity',
+    color: '#00f5ff',
+    desc: 'A Python-based application built to demonstrate fundamental cybersecurity concepts through real encryption and decryption functionality. This project focuses on protecting data confidentiality using established encryption algorithms.',
+    features: [
+      'Encrypt any plaintext message using cipher algorithms',
+      'Decrypt ciphertext back to readable form with the correct key',
+      'Demonstrates Caesar Cipher, XOR, and basic AES-style logic',
+      'Clean terminal UI for easy use',
+      'Practical understanding of cryptography basics'
+    ],
+    techs: ['Python', 'Cryptography', 'CLI Interface', 'Data Security'],
+    techColor: '#00f5ff',
+    previewFile: 'crypto-project.html'
+  },
+  herbal: {
+    icon: '🌿',
+    title: 'Herbal Brand Shopping Website',
+    subtitle: 'Java · SQL · Full-Stack E-Commerce',
+    color: '#10f08a',
+    desc: 'A complete e-commerce web application for a herbal products brand. Built with Java backend and SQL database, this platform allows users to browse products, search by category, view details, and complete purchases.',
+    features: [
+      'Product catalog with herbal categories',
+      'Search and filter functionality',
+      'Product detail pages with descriptions',
+      'Shopping cart and order summary UI',
+      'Responsive design for all devices',
+      'Backend: Java Servlets + MySQL Database'
+    ],
+    techs: ['Java', 'SQL', 'HTML', 'CSS', 'JavaScript', 'Full-Stack'],
+    techColor: '#10f08a',
+    previewFile: 'herbal-project.html'
+  },
+  doctor: {
+    icon: '🏥',
+    title: 'Find My Doctor',
+    subtitle: 'PHP · HTML/CSS/JS · Location-Based',
+    color: '#ff6b35',
+    desc: 'A healthcare web application that solves a real-world problem: finding nearby doctors quickly during emergencies or while traveling. The app uses location-based filtering to show relevant healthcare providers.',
+    features: [
+      'Search doctors by location and specialty',
+      'Emergency doctor finder feature',
+      'Doctor profiles with contact info',
+      'Location-based filtering system',
+      'Mobile-friendly responsive UI',
+      'PHP backend with MySQL integration'
+    ],
+    techs: ['PHP', 'HTML', 'CSS', 'JavaScript', 'MySQL', 'Location API'],
+    techColor: '#ff6b35',
+    previewFile: 'doctor-project.html'
+  }
+};
+
+function openModal(key) {
+  const p = projects[key];
+  const techsHtml = p.techs.map(t => `<span class="skill-tag" style="background:rgba(255,255,255,0.05);color:${p.color};border:1px solid ${p.color}40;padding:0.25rem 0.7rem;border-radius:4px;font-size:0.78rem;font-family:var(--mono)">${t}</span>`).join('');
+  const featuresHtml = p.features.map(f => `<li>${f}</li>`).join('');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-top">
+      <div class="modal-icon">${p.icon}</div>
+      <div>
+        <div class="modal-title" style="color:${p.color}">${p.title}</div>
+        <div class="modal-subtitle">${p.subtitle}</div>
+      </div>
+    </div>
+    <div class="modal-section">
+      <h4 style="color:${p.color}">About This Project</h4>
+      <p>${p.desc}</p>
+    </div>
+    <div class="modal-section">
+      <h4 style="color:${p.color}">Key Features</h4>
+      <ul>${featuresHtml}</ul>
+    </div>
+    <div class="modal-section">
+      <h4 style="color:${p.color}">Tech Stack</h4>
+      <div class="modal-techs">${techsHtml}</div>
+    </div>
+    <div class="modal-preview">
+      <p style="color:var(--muted);font-size:0.85rem;margin-bottom:0.5rem">🚀 See the frontend demo</p>
+      <button class="modal-preview-btn" style="background:${p.color}" onclick="window.open('${p.previewFile}','_blank')">Open Project Preview</button>
+    </div>
+  `;
+  document.getElementById('modalOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>

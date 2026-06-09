@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HerbalBliss — Natural & Organic Products</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green: #2d6a4f; --light-green: #52b788; --pale: #d8f3dc;
+      --cream: #f8f4e8; --dark: #1b1b1b; --muted: #6b7280;
+      --accent: #b7e4c7; --white: #fff; --orange: #e07b39;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter',sans-serif; background:var(--cream); color:var(--dark); }
+
+    /* NAV */
+    nav {
+      background:var(--white); padding:1rem 2rem; display:flex;
+      justify-content:space-between; align-items:center;
+      border-bottom:1px solid #e5e7eb; position:sticky; top:0; z-index:50;
+      box-shadow:0 2px 10px rgba(0,0,0,0.05);
+    }
+    .logo { font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--green); }
+    .logo span { color:var(--light-green); }
+    .nav-links { display:flex; gap:2rem; list-style:none; }
+    .nav-links a { color:var(--muted); text-decoration:none; font-size:0.9rem; transition:color .3s; }
+    .nav-links a:hover { color:var(--green); }
+    .nav-right { display:flex; gap:1rem; align-items:center; }
+    .cart-btn {
+      background:var(--green); color:var(--white); border:none;
+      padding:0.5rem 1.2rem; border-radius:25px; cursor:pointer;
+      font-size:0.9rem; display:flex; align-items:center; gap:0.5rem; transition:all .3s;
+    }
+    .cart-btn:hover { background:var(--light-green); }
+    .cart-count {
+      background:var(--orange); color:white; border-radius:50%;
+      width:20px; height:20px; font-size:0.72rem; display:flex;
+      align-items:center; justify-content:center; font-weight:700;
+    }
+
+    /* HERO */
+    .hero {
+      background:linear-gradient(135deg, #1b4332 0%, #2d6a4f 50%, #52b788 100%);
+      color:white; padding:5rem 2rem; text-align:center;
+    }
+    .hero-tag {
+      background:rgba(255,255,255,0.15); display:inline-block;
+      padding:0.3rem 1rem; border-radius:20px; font-size:0.8rem; margin-bottom:1rem;
+    }
+    .hero h1 { font-family:'Playfair Display',serif; font-size:clamp(2rem,5vw,3.5rem); margin-bottom:1rem; }
+    .hero p { max-width:500px; margin:0 auto 2rem; opacity:0.85; line-height:1.7; }
+    .hero-btns { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+    .btn-white { background:white; color:var(--green); padding:0.75rem 2rem; border-radius:30px; border:none; cursor:pointer; font-weight:600; transition:all .3s; }
+    .btn-white:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(0,0,0,0.2); }
+    .btn-outline-white { background:transparent; color:white; border:2px solid white; padding:0.75rem 2rem; border-radius:30px; cursor:pointer; font-weight:600; transition:all .3s; }
+    .btn-outline-white:hover { background:rgba(255,255,255,0.1); }
+
+    /* BANNER */
+    .banner {
+      background:var(--pale); padding:0.7rem 2rem; text-align:center;
+      font-size:0.85rem; color:var(--green); font-weight:500;
+      display:flex; justify-content:center; gap:3rem; flex-wrap:wrap;
+    }
+    .banner span { display:flex; align-items:center; gap:0.4rem; }
+
+    /* CATEGORIES */
+    .section { padding:3rem 2rem; max-width:1100px; margin:0 auto; }
+    .section-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; }
+    .section-title { font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--dark); }
+    .see-all { color:var(--light-green); font-size:0.9rem; text-decoration:none; font-weight:500; }
+    .cat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:1rem; }
+    .cat-card {
+      background:white; border-radius:12px; padding:1.2rem; text-align:center;
+      cursor:pointer; transition:all .3s; border:2px solid transparent;
+    }
+    .cat-card:hover { border-color:var(--light-green); transform:translateY(-3px); }
+    .cat-icon { font-size:2rem; margin-bottom:0.5rem; }
+    .cat-name { font-size:0.82rem; font-weight:500; color:var(--dark); }
+
+    /* SEARCH */
+    .search-bar {
+      max-width:500px; margin:0 auto 3rem; display:flex;
+      background:white; border-radius:30px; overflow:hidden;
+      border:2px solid var(--pale); box-shadow:0 4px 15px rgba(0,0,0,0.08);
+    }
+    .search-bar input {
+      flex:1; padding:0.8rem 1.2rem; border:none; outline:none;
+      font-family:'Inter',sans-serif; font-size:0.9rem;
+    }
+    .search-bar button {
+      background:var(--green); color:white; border:none;
+      padding:0 1.5rem; cursor:pointer; font-size:1rem; transition:background .3s;
+    }
+    .search-bar button:hover { background:var(--light-green); }
+
+    /* PRODUCTS */
+    .products-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:1.5rem; }
+    .product-card {
+      background:white; border-radius:14px; overflow:hidden;
+      box-shadow:0 2px 15px rgba(0,0,0,0.06); transition:all .3s; cursor:pointer;
+    }
+    .product-card:hover { transform:translateY(-5px); box-shadow:0 10px 30px rgba(0,0,0,0.12); }
+    .product-img {
+      height:180px; display:flex; align-items:center; justify-content:center;
+      font-size:4rem; position:relative;
+    }
+    .product-badge {
+      position:absolute; top:10px; right:10px; background:var(--orange);
+      color:white; font-size:0.7rem; padding:0.2rem 0.5rem; border-radius:10px; font-weight:600;
+    }
+    .product-badge.new { background:var(--green); }
+    .product-info { padding:1rem; }
+    .product-cat { font-size:0.72rem; color:var(--light-green); font-weight:600; text-transform:uppercase; letter-spacing:.05em; }
+    .product-name { font-weight:600; margin:0.3rem 0 0.4rem; font-size:0.95rem; }
+    .product-desc { font-size:0.8rem; color:var(--muted); line-height:1.5; margin-bottom:0.8rem; }
+    .product-footer { display:flex; justify-content:space-between; align-items:center; }
+    .product-price { font-weight:700; color:var(--green); font-size:1.05rem; }
+    .product-price .original { font-size:0.8rem; color:var(--muted); text-decoration:line-through; font-weight:400; margin-left:0.3rem; }
+    .add-btn {
+      background:var(--green); color:white; border:none; border-radius:8px;
+      padding:0.45rem 0.9rem; cursor:pointer; font-size:0.82rem; font-weight:600; transition:all .3s;
+    }
+    .add-btn:hover { background:var(--light-green); }
+    .add-btn.added { background:var(--orange); }
+    .stars { color:#f59e0b; font-size:0.75rem; margin-bottom:0.3rem; }
+
+    /* CART SIDEBAR */
+    .cart-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200;
+      opacity:0; pointer-events:none; transition:opacity .3s;
+    }
+    .cart-overlay.active { opacity:1; pointer-events:all; }
+    .cart-sidebar {
+      position:fixed; right:0; top:0; bottom:0; width:380px; background:white;
+      z-index:300; transform:translateX(100%); transition:transform .3s;
+      display:flex; flex-direction:column; padding:1.5rem;
+      box-shadow:-5px 0 30px rgba(0,0,0,0.15);
+    }
+    .cart-sidebar.active { transform:translateX(0); }
+    .cart-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; }
+    .cart-header h3 { font-family:'Playfair Display',serif; font-size:1.2rem; }
+    .cart-close { background:none; border:none; font-size:1.4rem; cursor:pointer; color:var(--muted); }
+    .cart-items { flex:1; overflow-y:auto; }
+    .cart-item { display:flex; gap:1rem; padding:0.8rem 0; border-bottom:1px solid #f3f4f6; align-items:center; }
+    .cart-item-icon { font-size:2rem; }
+    .cart-item-info { flex:1; }
+    .cart-item-name { font-weight:600; font-size:0.9rem; }
+    .cart-item-price { color:var(--green); font-weight:700; font-size:0.9rem; }
+    .cart-item-qty { display:flex; align-items:center; gap:0.5rem; margin-top:0.3rem; }
+    .qty-btn { background:var(--pale); border:none; width:24px; height:24px; border-radius:6px; cursor:pointer; font-weight:700; }
+    .qty-num { font-size:0.9rem; font-weight:600; }
+    .cart-footer { margin-top:1rem; }
+    .cart-total { display:flex; justify-content:space-between; font-weight:700; font-size:1.1rem; margin-bottom:1rem; }
+    .checkout-btn { background:var(--green); color:white; width:100%; padding:1rem; border:none; border-radius:10px; font-size:1rem; font-weight:600; cursor:pointer; transition:all .3s; }
+    .checkout-btn:hover { background:var(--light-green); }
+
+    /* TOAST */
+    .toast {
+      position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(100px);
+      background:var(--dark); color:white; padding:0.8rem 1.5rem; border-radius:30px;
+      font-size:0.9rem; transition:transform .3s; z-index:500;
+    }
+    .toast.show { transform:translateX(-50%) translateY(0); }
+
+    footer { background:var(--green); color:white; text-align:center; padding:2rem; margin-top:2rem; }
+
+    @media(max-width:768px) {
+      .nav-links { display:none; }
+      .cart-sidebar { width:100%; }
+      .banner { gap:1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Herbal<span>Bliss</span> 🌿</div>
+  <ul class="nav-links">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">Products</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Blog</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="cart-btn" onclick="toggleCart()">
+      🛒 Cart <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- BANNER -->
+<div class="banner">
+  <span>🚚 Free Delivery above ₹499</span>
+  <span>🌱 100% Natural & Organic</span>
+  <span>✅ Certified Products</span>
+  <span>↩️ 30-day Return Policy</span>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">🌿 Nature's Best — Handcrafted & Pure</div>
+  <h1>Heal with Nature,<br/>Live with Purity</h1>
+  <p>Discover our range of 100% organic herbal products — from wellness teas to natural skincare, sourced straight from nature's heart.</p>
+  <div class="hero-btns">
+    <button class="btn-white" onclick="scrollProducts()">Shop Now</button>
+    <button class="btn-outline-white">Learn More</button>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="section">
+  <div class="section-head">
+    <h2 class="section-title">Shop by Category</h2>
+    <a href="#" class="see-all">See All →</a>
+  </div>
+  <div class="cat-grid">
+    <div class="cat-card" onclick="filterCat('wellness')"><div class="cat-icon">💊</div><div class="cat-name">Wellness</div></div>
+    <div class="cat-card" onclick="filterCat('skincare')"><div class="cat-icon">🧴</div><div class="cat-name">Skincare</div></div>
+    <div class="cat-card" onclick="filterCat('tea')"><div class="cat-icon">🍵</div><div class="cat-name">Herbal Teas</div></div>
+    <div class="cat-card" onclick="filterCat('haircare')"><div class="cat-icon">💆</div><div class="cat-name">Haircare</div></div>
+    <div class="cat-card" onclick="filterCat('immunity')"><div class="cat-icon">🛡️</div><div class="cat-name">Immunity</div></div>
+    <div class="cat-card" onclick="filterCat('oils')"><div class="cat-icon">🫙</div><div class="cat-name">Essential Oils</div></div>
+    <div class="cat-card" onclick="filterCat('all')"><div class="cat-icon">🌺</div><div class="cat-name">All Products</div></div>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<div class="section" id="products-section">
+  <div class="section-head">
+    <h2 class="section-title">Featured Products</h2>
+    <a href="#" class="see-all">View All →</a>
+  </div>
+  <div class="search-bar">
+    <input type="text" placeholder="Search herbal products..." id="searchInput" oninput="searchProducts()"/>
+    <button>🔍</button>
+  </div>
+  <div class="products-grid" id="productsGrid"></div>
+</div>
+
+<footer>
+  <p>🌿 HerbalBliss — Pure, Natural, Organic | Built with Java + SQL Backend</p>
+  <p style="margin-top:0.5rem;opacity:0.7;font-size:0.85rem">© 2024 Pawan Kumar | Academic Project</p>
+</footer>
+
+<!-- CART SIDEBAR -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <h3>🛒 Your Cart</h3>
+    <button class="cart-close" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <span>Total:</span>
+      <span id="cartTotal">₹0</span>
+    </div>
+    <button class="checkout-btn" onclick="checkout()">Proceed to Checkout →</button>
+  </div>
+</div>
+
+<script>
+const allProducts = [
+  { id:1, name:'Ashwagandha Capsules', cat:'wellness', icon:'🌿', desc:'Premium root extract for stress relief & energy boost', price:349, original:499, badge:'30% OFF', stars:'★★★★★', bg:'#d8f3dc' },
+  { id:2, name:'Rose Face Serum', cat:'skincare', icon:'🌹', desc:'Natural rose water infused anti-aging glow serum', price:599, original:799, badge:'NEW', stars:'★★★★☆', bg:'#fce4ec', badgeType:'new' },
+  { id:3, name:'Tulsi Green Tea', cat:'tea', icon:'🍵', desc:'Holy basil & green tea blend for immunity & calm', price:199, original:249, badge:'HOT', stars:'★★★★★', bg:'#e8f5e9' },
+  { id:4, name:'Bhringraj Hair Oil', cat:'haircare', icon:'💆', desc:'Ancient Ayurvedic recipe for hair growth & strength', price:279, original:349, badge:'', stars:'★★★★☆', bg:'#fff8e1' },
+  { id:5, name:'Giloy Immunity Kit', cat:'immunity', icon:'🛡️', desc:'Complete immunity booster with Giloy, Amla & Neem', price:449, original:599, badge:'SALE', stars:'★★★★★', bg:'#e3f2fd' },
+  { id:6, name:'Lavender Essential Oil', cat:'oils', icon:'💜', desc:'Pure cold-pressed lavender for aromatherapy & sleep', price:399, original:499, badge:'', stars:'★★★★☆', bg:'#f3e5f5' },
+  { id:7, name:'Neem Face Wash', cat:'skincare', icon:'🧴', desc:'Deep cleansing neem & turmeric gel face wash', price:149, original:199, badge:'NEW', stars:'★★★★★', bg:'#e8f5e9', badgeType:'new' },
+  { id:8, name:'Triphala Powder', cat:'wellness', icon:'🌰', desc:'Classic digestive tonic with Amla, Haritaki & Bibhitaki', price:229, original:299, badge:'BESTSELLER', stars:'★★★★★', bg:'#fff3e0' },
+];
+
+let cart = [];
+let filtered = [...allProducts];
+
+function renderProducts(list) {
+  const grid = document.getElementById('productsGrid');
+  grid.innerHTML = list.map(p => `
+    <div class="product-card" onclick="showProduct(${p.id})">
+      <div class="product-img" style="background:${p.bg}">
+        <span>${p.icon}</span>
+        ${p.badge ? `<span class="product-badge ${p.badgeType||''}">${p.badge}</span>` : ''}
+      </div>
+      <div class="product-info">
+        <div class="product-cat">${p.cat}</div>
+        <div class="stars">${p.stars}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-footer">
+          <div class="product-price">₹${p.price} <span class="original">₹${p.original}</span></div>
+          <button class="add-btn" id="btn-${p.id}" onclick="addToCart(event,${p.id})">+ Add</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addToCart(e, id) {
+  e.stopPropagation();
+  const p = allProducts.find(x => x.id === id);
+  const existing = cart.find(x => x.id === id);
+  if(existing) existing.qty++;
+  else cart.push({...p, qty:1});
+  updateCart();
+  const btn = document.getElementById('btn-'+id);
+  btn.textContent = '✓ Added'; btn.classList.add('added');
+  setTimeout(() => { btn.textContent = '+ Add'; btn.classList.remove('added'); }, 1500);
+  showToast(`${p.icon} ${p.name} added to cart!`);
+}
+
+function updateCart() {
+  document.getElementById('cartCount').textContent = cart.reduce((s,x)=>s+x.qty,0);
+  const total = cart.reduce((s,x)=>s+x.price*x.qty,0);
+  document.getElementById('cartTotal').textContent = '₹'+total;
+  document.getElementById('cartItems').innerHTML = cart.length === 0
+    ? '<p style="color:#9ca3af;text-align:center;margin-top:2rem">Your cart is empty 🌿</p>'
+    : cart.map(item => `
+      <div class="cart-item">
+        <div class="cart-item-icon">${item.icon}</div>
+        <div class="cart-item-info">
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-price">₹${item.price} each</div>
+          <div class="cart-item-qty">
+            <button class="qty-btn" onclick="changeQty(${item.id},-1)">−</button>
+            <span class="qty-num">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty(${item.id},1)">+</button>
+          </div>
+        </div>
+        <div style="color:#ef4444;cursor:pointer" onclick="removeItem(${item.id})">🗑️</div>
+      </div>
+    `).join('');
+}
+
+function changeQty(id,d) {
+  const item = cart.find(x=>x.id===id);
+  if(item) { item.qty+=d; if(item.qty<=0) cart=cart.filter(x=>x.id!==id); }
+  updateCart();
+}
+function removeItem(id) { cart=cart.filter(x=>x.id!==id); updateCart(); }
+function toggleCart() {
+  document.getElementById('cartSidebar').classList.toggle('active');
+  document.getElementById('cartOverlay').classList.toggle('active');
+}
+function checkout() { showToast('🎉 Order placed! Thank you for shopping with HerbalBliss!'); toggleCart(); cart=[]; updateCart(); }
+function filterCat(cat) { filtered = cat==='all' ? [...allProducts] : allProducts.filter(p=>p.cat===cat); renderProducts(filtered); scrollProducts(); }
+function searchProducts() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  renderProducts(allProducts.filter(p=>p.name.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q)));
+}
+function scrollProducts() { document.getElementById('products-section').scrollIntoView({behavior:'smooth'}); }
+function showProduct(id) { const p=allProducts.find(x=>x.id===id); showToast(`${p.icon} Viewing: ${p.name}`); }
+function showToast(msg) {
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+renderProducts(allProducts);
+</script>
+</body>
+</html>

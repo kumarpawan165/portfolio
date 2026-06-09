@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CipherX — Encryption & Decryption System</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg:#060b14;--surface:#0d1526;--card:#111e33;--border:#1a2d4a;
+      --cyan:#00f5ff;--green:#00ff88;--purple:#bf5af2;--red:#ff453a;
+      --yellow:#ffd60a;--text:#e2e8f0;--muted:#64748b;
+      --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;}
+    ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:var(--cyan);border-radius:5px;}
+
+    /* MATRIX BG */
+    canvas{position:fixed;top:0;left:0;z-index:0;opacity:0.04;pointer-events:none;}
+
+    /* MAIN */
+    .container{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+
+    /* HEADER */
+    header{text-align:center;padding:3rem 0 2rem;}
+    .header-tag{font-family:var(--mono);font-size:0.75rem;color:var(--green);background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);padding:0.3rem 0.8rem;border-radius:4px;display:inline-block;margin-bottom:1.2rem;}
+    header h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:700;margin-bottom:0.8rem;}
+    header h1 span.cyan{color:var(--cyan);}
+    header h1 span.purple{color:var(--purple);}
+    header p{color:var(--muted);max-width:500px;margin:0 auto;line-height:1.7;}
+
+    /* CIPHER SELECTOR */
+    .cipher-tabs{display:flex;gap:0.5rem;margin:2rem 0 1.5rem;flex-wrap:wrap;}
+    .cipher-tab{
+      font-family:var(--mono);font-size:0.82rem;padding:0.5rem 1rem;border-radius:6px;
+      border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;transition:all .3s;
+    }
+    .cipher-tab.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,245,255,0.08);}
+    .cipher-tab:hover{border-color:var(--cyan);color:var(--cyan);}
+
+    /* MAIN CARD */
+    .main-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:1.5rem;}
+    .card-title{font-family:var(--mono);font-size:0.8rem;color:var(--cyan);margin-bottom:1.2rem;display:flex;align-items:center;gap:0.5rem;}
+    .card-title::before{content:'>';color:var(--green);}
+
+    /* TEXTAREA */
+    .text-area{
+      width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);
+      padding:1rem;border-radius:8px;font-family:var(--mono);font-size:0.88rem;
+      resize:vertical;min-height:120px;outline:none;transition:border-color .3s;line-height:1.6;
+    }
+    .text-area:focus{border-color:var(--cyan);}
+    .text-area::placeholder{color:var(--muted);}
+
+    /* KEY INPUT */
+    .key-row{display:grid;grid-template-columns:1fr auto;gap:1rem;margin:1rem 0;align-items:end;}
+    .input-group label{font-size:0.78rem;color:var(--muted);font-family:var(--mono);display:block;margin-bottom:0.4rem;}
+    .key-input{
+      width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);
+      padding:0.7rem 1rem;border-radius:8px;font-family:var(--mono);font-size:0.9rem;outline:none;transition:border-color .3s;
+    }
+    .key-input:focus{border-color:var(--purple);}
+    .gen-key-btn{
+      background:rgba(191,90,242,0.15);color:var(--purple);border:1px solid var(--purple);
+      padding:0.7rem 1rem;border-radius:8px;cursor:pointer;font-size:0.82rem;font-family:var(--mono);
+      white-space:nowrap;transition:all .3s;
+    }
+    .gen-key-btn:hover{background:rgba(191,90,242,0.25);}
+
+    /* BUTTONS */
+    .btn-row{display:flex;gap:1rem;margin-top:1.2rem;flex-wrap:wrap;}
+    .btn-encrypt{
+      flex:1;background:var(--cyan);color:var(--bg);border:none;padding:0.9rem;
+      border-radius:8px;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all .3s;
+    }
+    .btn-encrypt:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,245,255,0.3);}
+    .btn-decrypt{
+      flex:1;background:transparent;color:var(--purple);border:2px solid var(--purple);
+      padding:0.9rem;border-radius:8px;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all .3s;
+    }
+    .btn-decrypt:hover{background:rgba(191,90,242,0.1);transform:translateY(-2px);}
+    .btn-clear{
+      background:rgba(255,69,58,0.1);color:var(--red);border:1px solid var(--red);
+      padding:0.9rem 1.2rem;border-radius:8px;cursor:pointer;font-size:0.9rem;transition:all .3s;
+    }
+    .btn-clear:hover{background:rgba(255,69,58,0.2);}
+
+    /* OUTPUT */
+    .output-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:1.5rem;}
+    .output-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;}
+    .output-label{font-family:var(--mono);font-size:0.8rem;color:var(--green);}
+    .copy-btn{
+      font-family:var(--mono);font-size:0.75rem;padding:0.3rem 0.8rem;
+      background:rgba(0,255,136,0.1);color:var(--green);border:1px solid rgba(0,255,136,0.3);
+      border-radius:4px;cursor:pointer;transition:all .3s;
+    }
+    .copy-btn:hover{background:rgba(0,255,136,0.2);}
+    .output-text{
+      background:var(--surface);border:1px solid var(--border);border-radius:8px;
+      padding:1rem;font-family:var(--mono);font-size:0.85rem;min-height:80px;
+      color:var(--cyan);word-break:break-all;line-height:1.6;
+      position:relative;overflow:hidden;
+    }
+    .output-placeholder{color:var(--muted);font-style:italic;}
+
+    /* INFO CARDS */
+    .info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1rem;margin-bottom:1.5rem;}
+    .info-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.3rem;}
+    .info-card h4{font-family:var(--mono);font-size:0.78rem;margin-bottom:0.7rem;}
+    .info-card p{color:var(--muted);font-size:0.83rem;line-height:1.6;}
+
+    /* PYTHON CODE */
+    .code-block{
+      background:var(--surface);border:1px solid var(--border);border-radius:10px;
+      padding:1.2rem;font-family:var(--mono);font-size:0.8rem;line-height:1.8;overflow-x:auto;
+    }
+    .kw{color:var(--purple);}
+    .fn{color:var(--cyan);}
+    .str{color:var(--green);}
+    .cm{color:var(--muted);}
+    .num{color:var(--yellow);}
+
+    /* STRENGTH INDICATOR */
+    .strength{margin-top:0.5rem;display:flex;gap:3px;align-items:center;}
+    .strength-bar{height:4px;flex:1;border-radius:2px;background:var(--border);transition:background .3s;}
+    .strength-label{font-size:0.72rem;color:var(--muted);font-family:var(--mono);margin-left:0.5rem;}
+
+    /* TOAST */
+    .toast{
+      position:fixed;bottom:2rem;right:2rem;background:var(--card);
+      border:1px solid var(--cyan);color:var(--cyan);
+      padding:0.8rem 1.5rem;border-radius:8px;font-family:var(--mono);font-size:0.85rem;
+      transform:translateY(100px);transition:transform .3s;z-index:100;
+    }
+    .toast.show{transform:translateY(0);}
+
+    footer{text-align:center;padding:2rem;color:var(--muted);font-family:var(--mono);font-size:0.78rem;}
+  </style>
+</head>
+<body>
+<canvas id="matrix"></canvas>
+<div class="toast" id="toast"></div>
+
+<div class="container">
+  <header>
+    <div class="header-tag">🔐 Cybersecurity Project — Python</div>
+    <h1><span class="cyan">Cipher</span><span class="purple">X</span></h1>
+    <p>Encryption & Decryption System — Demonstrates Caesar Cipher, XOR, and Vigenère algorithms with a live interactive demo.</p>
+  </header>
+
+  <!-- CIPHER SELECTOR -->
+  <div class="cipher-tabs">
+    <button class="cipher-tab active" onclick="selectCipher('caesar',this)">Caesar Cipher</button>
+    <button class="cipher-tab" onclick="selectCipher('xor',this)">XOR Cipher</button>
+    <button class="cipher-tab" onclick="selectCipher('vigenere',this)">Vigenère Cipher</button>
+    <button class="cipher-tab" onclick="selectCipher('reverse',this)">Reverse Cipher</button>
+  </div>
+
+  <!-- INFO ABOUT SELECTED -->
+  <div id="cipherInfo" class="main-card" style="margin-bottom:1.5rem;">
+    <div class="card-title">cipher.info</div>
+    <div id="cipherDesc" style="color:var(--muted);font-size:0.9rem;line-height:1.7;"></div>
+  </div>
+
+  <!-- INPUT CARD -->
+  <div class="main-card">
+    <div class="card-title">input.message</div>
+    <textarea class="text-area" id="inputText" placeholder="Type your secret message here..."></textarea>
+
+    <div class="key-row">
+      <div class="input-group">
+        <label id="keyLabel">Shift Key (1–25)</label>
+        <input type="text" class="key-input" id="keyInput" placeholder="Enter key..." oninput="checkStrength()"/>
+        <div class="strength" id="strengthBar">
+          <div class="strength-bar" id="sb1"></div>
+          <div class="strength-bar" id="sb2"></div>
+          <div class="strength-bar" id="sb3"></div>
+          <div class="strength-bar" id="sb4"></div>
+          <span class="strength-label" id="strengthLabel">Key strength</span>
+        </div>
+      </div>
+      <button class="gen-key-btn" onclick="generateKey()">⚡ Generate</button>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-encrypt" onclick="doEncrypt()">🔐 Encrypt</button>
+      <button class="btn-decrypt" onclick="doDecrypt()">🔓 Decrypt</button>
+      <button class="btn-clear" onclick="clearAll()">✕</button>
+    </div>
+  </div>
+
+  <!-- OUTPUT CARD -->
+  <div class="output-card">
+    <div class="output-header">
+      <span class="output-label">> output.result</span>
+      <button class="copy-btn" onclick="copyOutput()">📋 Copy</button>
+    </div>
+    <div class="output-text" id="outputText">
+      <span class="output-placeholder">Output will appear here...</span>
+    </div>
+    <div id="statsRow" style="display:flex;gap:1.5rem;margin-top:0.8rem;flex-wrap:wrap;"></div>
+  </div>
+
+  <!-- INFO CARDS -->
+  <div class="info-grid">
+    <div class="info-card">
+      <h4 style="color:var(--cyan)">🔐 Caesar Cipher</h4>
+      <p>Shifts each letter by a fixed number. Simple but foundational — ROT13 is a special case with shift of 13.</p>
+    </div>
+    <div class="info-card">
+      <h4 style="color:var(--purple)">⚡ XOR Cipher</h4>
+      <p>XORs each character with a key. Symmetric — the same operation encrypts and decrypts. Used in real crypto.</p>
+    </div>
+    <div class="info-card">
+      <h4 style="color:var(--green)">🔑 Vigenère Cipher</h4>
+      <p>Polyalphabetic substitution using a keyword. Much stronger than Caesar — different shift for each character.</p>
+    </div>
+  </div>
+
+  <!-- PYTHON CODE PREVIEW -->
+  <div class="main-card">
+    <div class="card-title">python.source_code</div>
+    <div class="code-block" id="codeBlock"></div>
+  </div>
+
+</div>
+
+<footer>
+  🔐 CipherX — Encryption & Decryption System | Built with Python | Academic Project by Pawan Kumar
+</footer>
+
+<script>
+// MATRIX RAIN
+const canvas = document.getElementById('matrix');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+const cols = Math.floor(canvas.width/20); const drops = Array(cols).fill(1);
+const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモ';
+function drawMatrix(){
+  ctx.fillStyle='rgba(6,11,20,0.05)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle='#00f5ff'; ctx.font='14px JetBrains Mono';
+  drops.forEach((y,i)=>{
+    const char=chars[Math.floor(Math.random()*chars.length)];
+    ctx.fillText(char,i*20,y*20);
+    if(y*20>canvas.height&&Math.random()>0.975) drops[i]=0;
+    drops[i]++;
+  });
+}
+setInterval(drawMatrix,50);
+
+// CIPHER LOGIC
+let activeCipher = 'caesar';
+
+const ciphers = {
+  caesar:{
+    desc:'The Caesar Cipher is one of the oldest encryption techniques. It shifts every letter in the plaintext by a fixed number of positions in the alphabet. For example, with shift 3: A→D, B→E, C→F. Julius Caesar used this to communicate with his generals.',
+    keyLabel:'Shift Key (1–25)', keyPlaceholder:'e.g. 13',
+    code:`<span class="cm"># Caesar Cipher in Python</span>
+<span class="kw">def</span> <span class="fn">caesar_encrypt</span>(text, shift):
+    result = <span class="str">""</span>
+    <span class="kw">for</span> char <span class="kw">in</span> text:
+        <span class="kw">if</span> char.<span class="fn">isalpha</span>():
+            base = <span class="fn">ord</span>(<span class="str">'A'</span>) <span class="kw">if</span> char.<span class="fn">isupper</span>() <span class="kw">else</span> <span class="fn">ord</span>(<span class="str">'a'</span>)
+            result += <span class="fn">chr</span>((<span class="fn">ord</span>(char) - base + shift) % <span class="num">26</span> + base)
+        <span class="kw">else</span>:
+            result += char
+    <span class="kw">return</span> result
+
+<span class="cm"># Decrypt is same with negative shift</span>
+<span class="kw">def</span> <span class="fn">caesar_decrypt</span>(text, shift):
+    <span class="kw">return</span> <span class="fn">caesar_encrypt</span>(text, -shift)
+
+<span class="cm"># Example usage</span>
+msg = <span class="str">"Hello Pawan"</span>
+encrypted = <span class="fn">caesar_encrypt</span>(msg, <span class="num">13</span>)
+decrypted = <span class="fn">caesar_decrypt</span>(encrypted, <span class="num">13</span>)`,
+    encrypt:(text,key)=>{
+      const shift=parseInt(key)||3;
+      return text.split('').map(c=>{
+        if(/[a-z]/.test(c)) return String.fromCharCode((c.charCodeAt(0)-97+shift)%26+97);
+        if(/[A-Z]/.test(c)) return String.fromCharCode((c.charCodeAt(0)-65+shift)%26+65);
+        return c;
+      }).join('');
+    },
+    decrypt:(text,key)=>{
+      const shift=parseInt(key)||3;
+      return text.split('').map(c=>{
+        if(/[a-z]/.test(c)) return String.fromCharCode(((c.charCodeAt(0)-97-shift)%26+26)%26+97);
+        if(/[A-Z]/.test(c)) return String.fromCharCode(((c.charCodeAt(0)-65-shift)%26+26)%26+65);
+        return c;
+      }).join('');
+    },
+    genKey:()=>Math.floor(Math.random()*25+1).toString()
+  },
+  xor:{
+    desc:'XOR (Exclusive OR) cipher operates on binary data. Each character is XORed with a key character. It\'s symmetric — the same operation both encrypts and decrypts. XOR is the building block of many modern cryptographic algorithms including AES.',
+    keyLabel:'XOR Key (any word)', keyPlaceholder:'e.g. mysecret',
+    code:`<span class="cm"># XOR Cipher in Python</span>
+<span class="kw">def</span> <span class="fn">xor_encrypt</span>(text, key):
+    result = <span class="str">""</span>
+    <span class="kw">for</span> i, char <span class="kw">in</span> <span class="fn">enumerate</span>(text):
+        key_char = key[i % <span class="fn">len</span>(key)]
+        xored = <span class="fn">ord</span>(char) ^ <span class="fn">ord</span>(key_char)
+        result += <span class="fn">chr</span>(xored)
+    <span class="kw">return</span> result
+
+<span class="cm"># XOR is self-inverse: encrypt(encrypt(text)) == text</span>
+<span class="kw">def</span> <span class="fn">xor_decrypt</span>(cipher, key):
+    <span class="kw">return</span> <span class="fn">xor_encrypt</span>(cipher, key)
+
+<span class="cm"># Example</span>
+msg = <span class="str">"Secret Data"</span>
+key = <span class="str">"mykey"</span>
+enc = <span class="fn">xor_encrypt</span>(msg, key)
+dec = <span class="fn">xor_decrypt</span>(enc, key)`,
+    encrypt:(text,key)=>{if(!key)key='key';return text.split('').map((c,i)=>String.fromCharCode(c.charCodeAt(0)^key[i%key.length].charCodeAt(0))).join('');},
+    decrypt:(text,key)=>{if(!key)key='key';return text.split('').map((c,i)=>String.fromCharCode(c.charCodeAt(0)^key[i%key.length].charCodeAt(0))).join('');},
+    genKey:()=>Math.random().toString(36).slice(2,10)
+  },
+  vigenere:{
+    desc:'The Vigenère Cipher is a polyalphabetic substitution cipher. It uses a keyword to determine different shift values for each character. This makes frequency analysis attacks much harder than simple Caesar cipher. It was considered unbreakable for 300 years.',
+    keyLabel:'Keyword (letters only)', keyPlaceholder:'e.g. SECRET',
+    code:`<span class="cm"># Vigenère Cipher in Python</span>
+<span class="kw">def</span> <span class="fn">vigenere_encrypt</span>(text, key):
+    result, key_idx = <span class="str">""</span>, <span class="num">0</span>
+    key = key.<span class="fn">upper</span>()
+    <span class="kw">for</span> char <span class="kw">in</span> text:
+        <span class="kw">if</span> char.<span class="fn">isalpha</span>():
+            shift = <span class="fn">ord</span>(key[key_idx % <span class="fn">len</span>(key)]) - <span class="num">65</span>
+            base = <span class="num">65</span> <span class="kw">if</span> char.<span class="fn">isupper</span>() <span class="kw">else</span> <span class="num">97</span>
+            result += <span class="fn">chr</span>((<span class="fn">ord</span>(char) - base + shift) % <span class="num">26</span> + base)
+            key_idx += <span class="num">1</span>
+        <span class="kw">else</span>:
+            result += char
+    <span class="kw">return</span> result`,
+    encrypt:(text,key)=>{
+      if(!key||!/[a-zA-Z]/.test(key))key='KEY';
+      key=key.toUpperCase().replace(/[^A-Z]/g,'');
+      let idx=0;
+      return text.split('').map(c=>{
+        if(/[a-zA-Z]/.test(c)){
+          const shift=key.charCodeAt(idx%key.length)-65; idx++;
+          const base=/[A-Z]/.test(c)?65:97;
+          return String.fromCharCode((c.charCodeAt(0)-base+shift)%26+base);
+        }return c;
+      }).join('');
+    },
+    decrypt:(text,key)=>{
+      if(!key||!/[a-zA-Z]/.test(key))key='KEY';
+      key=key.toUpperCase().replace(/[^A-Z]/g,'');
+      let idx=0;
+      return text.split('').map(c=>{
+        if(/[a-zA-Z]/.test(c)){
+          const shift=key.charCodeAt(idx%key.length)-65; idx++;
+          const base=/[A-Z]/.test(c)?65:97;
+          return String.fromCharCode(((c.charCodeAt(0)-base-shift)%26+26)%26+base);
+        }return c;
+      }).join('');
+    },
+    genKey:()=>['ALPHA','DELTA','SIGMA','OMEGA','NEXUS'][Math.floor(Math.random()*5)]
+  },
+  reverse:{
+    desc:'Reverse Cipher is the simplest encryption — it reverses the string. While not cryptographically secure, it demonstrates the concept of obfuscation and is a great starting point for understanding encryption logic.',
+    keyLabel:'No key needed', keyPlaceholder:'(key not required)',
+    code:`<span class="cm"># Reverse Cipher in Python</span>
+<span class="kw">def</span> <span class="fn">reverse_encrypt</span>(text):
+    <span class="kw">return</span> text[::<span class="num">-1</span>]
+
+<span class="cm"># Same function decrypts too!</span>
+<span class="kw">def</span> <span class="fn">reverse_decrypt</span>(cipher):
+    <span class="kw">return</span> cipher[::<span class="num">-1</span>]
+
+<span class="cm"># Can combine with Caesar for more security</span>
+<span class="kw">def</span> <span class="fn">combo_encrypt</span>(text, shift):
+    reversed_text = <span class="fn">reverse_encrypt</span>(text)
+    <span class="kw">return</span> <span class="fn">caesar_encrypt</span>(reversed_text, shift)`,
+    encrypt:(text)=>text.split('').reverse().join(''),
+    decrypt:(text)=>text.split('').reverse().join(''),
+    genKey:()=>'-'
+  }
+};
+
+function selectCipher(name,el){
+  activeCipher=name;
+  document.querySelectorAll('.cipher-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const c=ciphers[name];
+  document.getElementById('cipherDesc').textContent=c.desc;
+  document.getElementById('keyLabel').textContent=c.keyLabel;
+  document.getElementById('keyInput').placeholder=c.keyPlaceholder;
+  document.getElementById('codeBlock').innerHTML=c.code;
+  document.getElementById('outputText').innerHTML='<span class="output-placeholder">Output will appear here...</span>';
+  document.getElementById('statsRow').innerHTML='';
+}
+
+function doEncrypt(){
+  const text=document.getElementById('inputText').value;
+  const key=document.getElementById('keyInput').value;
+  if(!text){showToast('⚠️ Please enter a message!');return;}
+  const c=ciphers[activeCipher];
+  const result=activeCipher==='reverse'?c.encrypt(text):c.encrypt(text,key||'3');
+  showOutput(result,'ENCRYPTED','🔐');
+}
+function doDecrypt(){
+  const text=document.getElementById('inputText').value;
+  const key=document.getElementById('keyInput').value;
+  if(!text){showToast('⚠️ Please enter ciphertext!');return;}
+  const c=ciphers[activeCipher];
+  const result=activeCipher==='reverse'?c.decrypt(text):c.decrypt(text,key||'3');
+  showOutput(result,'DECRYPTED','🔓');
+}
+function showOutput(result,label,icon){
+  document.getElementById('outputText').textContent=result;
+  document.getElementById('statsRow').innerHTML=`
+    <span style="font-family:var(--mono);font-size:0.75rem;color:var(--muted)">${icon} ${label}</span>
+    <span style="font-family:var(--mono);font-size:0.75rem;color:var(--muted)">📊 Length: ${result.length} chars</span>
+    <span style="font-family:var(--mono);font-size:0.75rem;color:var(--cyan)">✓ Cipher: ${activeCipher.toUpperCase()}</span>
+  `;
+}
+function generateKey(){
+  const key=ciphers[activeCipher].genKey();
+  document.getElementById('keyInput').value=key;
+  checkStrength();
+  showToast('⚡ Key generated: '+key);
+}
+function clearAll(){
+  document.getElementById('inputText').value='';
+  document.getElementById('keyInput').value='';
+  document.getElementById('outputText').innerHTML='<span class="output-placeholder">Output will appear here...</span>';
+  document.getElementById('statsRow').innerHTML='';
+  ['sb1','sb2','sb3','sb4'].forEach(id=>document.getElementById(id).style.background='var(--border)');
+  document.getElementById('strengthLabel').textContent='Key strength';
+}
+function copyOutput(){
+  const t=document.getElementById('outputText').textContent;
+  if(t.includes('Output will'))return showToast('⚠️ Nothing to copy yet!');
+  navigator.clipboard.writeText(t).then(()=>showToast('📋 Copied to clipboard!'));
+}
+function checkStrength(){
+  const key=document.getElementById('keyInput').value;
+  const len=key.length;
+  let level=0;
+  if(len>=1)level=1;if(len>=4)level=2;if(len>=8)level=3;if(len>=12)level=4;
+  const colors=['var(--border)','var(--red)','var(--yellow)','var(--cyan)','var(--green)'];
+  const labels=['Key strength','Weak','Fair','Strong','Very Strong'];
+  ['sb1','sb2','sb3','sb4'].forEach((id,i)=>{
+    document.getElementById(id).style.background=i<level?colors[level]:'var(--border)';
+  });
+  document.getElementById('strengthLabel').textContent=labels[level];
+  document.getElementById('strengthLabel').style.color=colors[level];
+}
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// INIT
+selectCipher('caesar',document.querySelector('.cipher-tab'));
+</script>
+</body>
+</html>

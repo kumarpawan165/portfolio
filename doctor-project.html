@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FindMyDoctor — Emergency & Nearby Doctor Finder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --blue:#1d4ed8; --light-blue:#3b82f6; --sky:#e0f2fe; --red:#ef4444;
+      --green:#10b981; --dark:#111827; --muted:#6b7280; --white:#fff; --bg:#f0f9ff;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--dark);}
+
+    /* NAV */
+    nav{
+      background:var(--white);padding:1rem 2rem;display:flex;
+      justify-content:space-between;align-items:center;
+      box-shadow:0 2px 10px rgba(0,0,0,0.08);position:sticky;top:0;z-index:50;
+    }
+    .logo{font-size:1.2rem;font-weight:700;color:var(--blue);}
+    .logo span{color:var(--red);}
+    .emergency-btn{
+      background:var(--red);color:white;border:none;padding:0.6rem 1.2rem;
+      border-radius:8px;cursor:pointer;font-weight:700;font-size:0.9rem;
+      display:flex;align-items:center;gap:0.5rem;animation:pulse 2s infinite;
+    }
+    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.4)}50%{box-shadow:0 0 0 10px rgba(239,68,68,0)}}
+
+    /* HERO */
+    .hero{
+      background:linear-gradient(135deg,#1e40af,#1d4ed8,#2563eb);
+      color:white;padding:4rem 2rem;text-align:center;
+    }
+    .hero h1{font-size:clamp(1.8rem,4vw,3rem);margin-bottom:1rem;font-weight:700;}
+    .hero p{max-width:500px;margin:0 auto 2rem;opacity:0.85;line-height:1.7;}
+
+    /* SEARCH BOX */
+    .search-box{
+      background:white;border-radius:14px;padding:1.5rem;max-width:700px;
+      margin:-2rem auto 0;position:relative;z-index:10;
+      box-shadow:0 10px 40px rgba(0,0,0,0.15);
+    }
+    .search-row{display:grid;grid-template-columns:1fr 1fr auto;gap:1rem;}
+    .search-field label{font-size:0.75rem;font-weight:600;color:var(--muted);display:block;margin-bottom:0.4rem;}
+    .search-field select,.search-field input{
+      width:100%;padding:0.7rem 1rem;border:1.5px solid #e5e7eb;border-radius:8px;
+      font-family:'Inter',sans-serif;font-size:0.9rem;outline:none;transition:border-color .3s;
+    }
+    .search-field select:focus,.search-field input:focus{border-color:var(--blue);}
+    .search-btn{
+      background:var(--blue);color:white;border:none;padding:0 1.5rem;
+      border-radius:8px;cursor:pointer;font-weight:600;font-size:0.95rem;
+      display:flex;align-items:center;gap:0.5rem;transition:all .3s;align-self:end;
+      height:42px;
+    }
+    .search-btn:hover{background:var(--light-blue);}
+
+    /* STATS */
+    .stats{
+      display:flex;justify-content:center;gap:3rem;padding:2.5rem;
+      flex-wrap:wrap;max-width:800px;margin:0 auto;
+    }
+    .stat{text-align:center;}
+    .stat-num{font-size:1.8rem;font-weight:700;color:var(--blue);}
+    .stat-label{font-size:0.82rem;color:var(--muted);}
+
+    /* SECTION */
+    .section{padding:2.5rem 2rem;max-width:1100px;margin:0 auto;}
+    .section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;}
+    .section-title{font-size:1.3rem;font-weight:700;}
+    .filter-tabs{display:flex;gap:0.5rem;flex-wrap:wrap;}
+    .tab{
+      padding:0.4rem 1rem;border-radius:20px;border:1.5px solid #e5e7eb;
+      background:white;cursor:pointer;font-size:0.82rem;font-weight:500;transition:all .3s;
+    }
+    .tab.active,.tab:hover{background:var(--blue);color:white;border-color:var(--blue);}
+
+    /* DOCTOR CARDS */
+    .doctors-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem;}
+    .doctor-card{
+      background:white;border-radius:14px;padding:1.5rem;
+      box-shadow:0 2px 15px rgba(0,0,0,0.07);transition:all .3s;border:2px solid transparent;
+    }
+    .doctor-card:hover{transform:translateY(-3px);border-color:var(--light-blue);box-shadow:0 10px 30px rgba(0,0,0,0.12);}
+    .doctor-top{display:flex;gap:1rem;margin-bottom:1rem;}
+    .doctor-avatar{
+      width:60px;height:60px;border-radius:14px;display:flex;align-items:center;
+      justify-content:center;font-size:2rem;flex-shrink:0;
+    }
+    .doctor-name{font-weight:700;font-size:1rem;}
+    .doctor-spec{color:var(--blue);font-size:0.82rem;font-weight:600;margin:0.2rem 0;}
+    .doctor-qual{color:var(--muted);font-size:0.78rem;}
+    .doctor-tags{display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:1rem;}
+    .doctor-tag{
+      background:#f0f9ff;color:var(--blue);border:1px solid #bfdbfe;
+      font-size:0.72rem;padding:0.2rem 0.6rem;border-radius:10px;font-weight:500;
+    }
+    .doctor-info{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-bottom:1rem;}
+    .info-item{font-size:0.8rem;color:var(--muted);display:flex;align-items:center;gap:0.4rem;}
+    .info-item strong{color:var(--dark);}
+    .rating{color:#f59e0b;font-size:0.82rem;}
+    .available{color:var(--green);font-weight:600;font-size:0.78rem;display:flex;align-items:center;gap:0.3rem;}
+    .available::before{content:'';width:7px;height:7px;background:var(--green);border-radius:50%;display:inline-block;}
+    .doctor-actions{display:flex;gap:0.7rem;}
+    .btn-appt{
+      flex:1;background:var(--blue);color:white;border:none;border-radius:8px;
+      padding:0.65rem;cursor:pointer;font-weight:600;font-size:0.85rem;transition:all .3s;
+    }
+    .btn-appt:hover{background:var(--light-blue);}
+    .btn-call{
+      background:#f0fdf4;color:var(--green);border:1.5px solid var(--green);
+      border-radius:8px;padding:0.65rem 1rem;cursor:pointer;font-weight:600;
+      font-size:0.85rem;transition:all .3s;
+    }
+    .btn-call:hover{background:var(--green);color:white;}
+
+    /* EMERGENCY SECTION */
+    .emergency-section{
+      background:linear-gradient(135deg,#fef2f2,#fee2e2);
+      border:2px solid #fecaca;border-radius:16px;padding:2rem;
+      margin:2rem auto;max-width:1100px;
+    }
+    .emergency-title{
+      color:var(--red);font-size:1.2rem;font-weight:700;
+      display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;
+    }
+    .emergency-subtitle{color:var(--muted);font-size:0.88rem;margin-bottom:1.5rem;}
+    .emergency-contacts{display:flex;gap:1rem;flex-wrap:wrap;}
+    .em-contact{
+      background:white;border:1.5px solid #fecaca;border-radius:10px;
+      padding:0.8rem 1.2rem;display:flex;align-items:center;gap:0.7rem;
+      cursor:pointer;transition:all .3s;
+    }
+    .em-contact:hover{border-color:var(--red);transform:translateY(-2px);}
+    .em-icon{font-size:1.5rem;}
+    .em-name{font-weight:700;font-size:0.9rem;}
+    .em-num{color:var(--red);font-weight:700;font-size:1rem;}
+
+    /* MODAL */
+    .modal-overlay{
+      position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;
+      display:flex;justify-content:center;align-items:center;
+      opacity:0;pointer-events:none;transition:opacity .3s;
+    }
+    .modal-overlay.active{opacity:1;pointer-events:all;}
+    .modal{
+      background:white;border-radius:16px;max-width:480px;width:90%;
+      padding:2rem;position:relative;transform:scale(0.9);transition:transform .3s;
+    }
+    .modal-overlay.active .modal{transform:scale(1);}
+    .modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--muted);}
+    .modal h3{font-size:1.2rem;margin-bottom:1rem;color:var(--blue);}
+    .form-group{margin-bottom:1rem;}
+    .form-group label{font-size:0.8rem;font-weight:600;color:var(--muted);display:block;margin-bottom:0.4rem;}
+    .form-group input,.form-group select{
+      width:100%;padding:0.75rem;border:1.5px solid #e5e7eb;border-radius:8px;
+      font-family:'Inter',sans-serif;font-size:0.9rem;outline:none;
+    }
+    .form-group input:focus,.form-group select:focus{border-color:var(--blue);}
+    .submit-btn{
+      width:100%;background:var(--blue);color:white;border:none;padding:0.9rem;
+      border-radius:8px;font-weight:700;font-size:1rem;cursor:pointer;margin-top:0.5rem;transition:all .3s;
+    }
+    .submit-btn:hover{background:var(--light-blue);}
+
+    /* TOAST */
+    .toast{
+      position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);
+      background:var(--dark);color:white;padding:0.8rem 1.5rem;border-radius:30px;
+      font-size:0.9rem;transition:transform .3s;z-index:2000;
+    }
+    .toast.show{transform:translateX(-50%) translateY(0);}
+
+    footer{background:var(--blue);color:white;text-align:center;padding:1.5rem;margin-top:2rem;}
+    @media(max-width:768px){.search-row{grid-template-columns:1fr;}.stats{gap:1.5rem;}}
+  </style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">🏥 Find<span>My</span>Doctor</div>
+  <button class="emergency-btn" onclick="document.querySelector('.emergency-section').scrollIntoView({behavior:'smooth'})">
+    🚨 Emergency
+  </button>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Find Doctors Near You — Fast</h1>
+  <p>Emergency or planned visit — locate the right doctor in your area instantly. Trusted profiles, real availability.</p>
+</div>
+
+<!-- SEARCH BOX -->
+<div style="padding:0 1rem;">
+  <div class="search-box">
+    <div class="search-row">
+      <div class="search-field">
+        <label>Specialty</label>
+        <select id="specSelect">
+          <option value="">All Specialties</option>
+          <option>General Physician</option>
+          <option>Cardiologist</option>
+          <option>Dermatologist</option>
+          <option>Orthopedic</option>
+          <option>Pediatrician</option>
+          <option>Neurologist</option>
+          <option>ENT Specialist</option>
+        </select>
+      </div>
+      <div class="search-field">
+        <label>Location</label>
+        <input type="text" placeholder="New Delhi, Gurgaon..." id="locInput"/>
+      </div>
+      <button class="search-btn" onclick="doSearch()">🔍 Search</button>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><div class="stat-num">1,200+</div><div class="stat-label">Verified Doctors</div></div>
+  <div class="stat"><div class="stat-num">50+</div><div class="stat-label">Specialties</div></div>
+  <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Emergency Support</div></div>
+  <div class="stat"><div class="stat-num">4.8★</div><div class="stat-label">Average Rating</div></div>
+</div>
+
+<!-- EMERGENCY SECTION -->
+<div class="emergency-section">
+  <div class="emergency-title">🚨 Emergency Helplines</div>
+  <div class="emergency-subtitle">Quick access to emergency services — one tap to call</div>
+  <div class="emergency-contacts">
+    <div class="em-contact" onclick="showToast('📞 Calling Ambulance...')">
+      <div class="em-icon">🚑</div>
+      <div><div class="em-name">Ambulance</div><div class="em-num">108</div></div>
+    </div>
+    <div class="em-contact" onclick="showToast('📞 Calling Police...')">
+      <div class="em-icon">🚔</div>
+      <div><div class="em-name">Police</div><div class="em-num">100</div></div>
+    </div>
+    <div class="em-contact" onclick="showToast('📞 Calling Helpline...')">
+      <div class="em-icon">🏥</div>
+      <div><div class="em-name">Health Helpline</div><div class="em-num">104</div></div>
+    </div>
+    <div class="em-contact" onclick="showToast('📞 Calling Women Helpline...')">
+      <div class="em-icon">👩</div>
+      <div><div class="em-name">Women Safety</div><div class="em-num">1091</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- DOCTORS LIST -->
+<div class="section">
+  <div class="section-head">
+    <h2 class="section-title">Available Doctors</h2>
+    <div class="filter-tabs">
+      <button class="tab active" onclick="filterDocs('all',this)">All</button>
+      <button class="tab" onclick="filterDocs('General Physician',this)">General</button>
+      <button class="tab" onclick="filterDocs('Cardiologist',this)">Heart</button>
+      <button class="tab" onclick="filterDocs('Dermatologist',this)">Skin</button>
+      <button class="tab" onclick="filterDocs('Pediatrician',this)">Child</button>
+    </div>
+  </div>
+  <div class="doctors-grid" id="doctorsGrid"></div>
+</div>
+
+<!-- APPOINTMENT MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3>📅 Book Appointment</h3>
+    <div id="modal-doc-name" style="color:var(--muted);font-size:0.9rem;margin-bottom:1rem;"></div>
+    <div class="form-group"><label>Patient Name</label><input type="text" placeholder="Your full name"/></div>
+    <div class="form-group"><label>Phone Number</label><input type="tel" placeholder="+91 XXXXX XXXXX"/></div>
+    <div class="form-group"><label>Preferred Date</label><input type="date"/></div>
+    <div class="form-group">
+      <label>Time Slot</label>
+      <select>
+        <option>9:00 AM - 9:30 AM</option>
+        <option>10:00 AM - 10:30 AM</option>
+        <option>11:00 AM - 11:30 AM</option>
+        <option>2:00 PM - 2:30 PM</option>
+        <option>4:00 PM - 4:30 PM</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Reason for Visit</label><input type="text" placeholder="Brief description..."/></div>
+    <button class="submit-btn" onclick="bookAppt()">Confirm Appointment ✓</button>
+  </div>
+</div>
+
+<footer>
+  <p>🏥 FindMyDoctor — Built with PHP + MySQL | Academic Project by Pawan Kumar</p>
+</footer>
+
+<script>
+const doctors = [
+  { id:1, name:'Dr. Rajesh Sharma', spec:'General Physician', qual:'MBBS, MD — 15 yrs exp', icon:'👨‍⚕️', bg:'#dbeafe', fee:'₹500', loc:'Nangloi, New Delhi', rating:'4.9★ (127 reviews)', tags:['Cold & Flu','Fever','Diabetes','Hypertension'], available:true },
+  { id:2, name:'Dr. Priya Verma', spec:'Cardiologist', qual:'MBBS, DM Cardiology — 12 yrs exp', icon:'👩‍⚕️', bg:'#fce7f3', fee:'₹1200', loc:'Dwarka, New Delhi', rating:'4.8★ (89 reviews)', tags:['Heart Disease','ECG','Chest Pain','Angioplasty'], available:true },
+  { id:3, name:'Dr. Anil Mehta', spec:'Dermatologist', qual:'MBBS, DVD — 10 yrs exp', icon:'🧑‍⚕️', bg:'#dcfce7', fee:'₹700', loc:'Rajouri Garden', rating:'4.7★ (203 reviews)', tags:['Acne','Eczema','Hair Loss','Skin Allergy'], available:false },
+  { id:4, name:'Dr. Sunita Rao', spec:'Pediatrician', qual:'MBBS, DCH — 18 yrs exp', icon:'👩‍⚕️', bg:'#fef9c3', fee:'₹600', loc:'Peeragarhi, New Delhi', rating:'5.0★ (311 reviews)', tags:['Child Health','Vaccination','Growth','Nutrition'], available:true },
+  { id:5, name:'Dr. Vivek Gupta', spec:'Orthopedic', qual:'MBBS, MS Ortho — 8 yrs exp', icon:'👨‍⚕️', bg:'#f3e8ff', fee:'₹900', loc:'Gurgaon, Haryana', rating:'4.6★ (74 reviews)', tags:['Joint Pain','Fracture','Spine','Sports Injury'], available:true },
+  { id:6, name:'Dr. Kavita Singh', spec:'Neurologist', qual:'MBBS, DM Neurology — 20 yrs exp', icon:'👩‍⚕️', bg:'#ffedd5', fee:'₹1500', loc:'Rohini, New Delhi', rating:'4.9★ (156 reviews)', tags:['Migraine','Epilepsy','Stroke','Parkinson\'s'], available:true },
+];
+
+let currentFilter = 'all';
+
+function renderDoctors(list) {
+  document.getElementById('doctorsGrid').innerHTML = list.map(d => `
+    <div class="doctor-card">
+      <div class="doctor-top">
+        <div class="doctor-avatar" style="background:${d.bg}">${d.icon}</div>
+        <div>
+          <div class="doctor-name">${d.name}</div>
+          <div class="doctor-spec">${d.spec}</div>
+          <div class="doctor-qual">${d.qual}</div>
+        </div>
+      </div>
+      <div class="doctor-tags">${d.tags.map(t=>`<span class="doctor-tag">${t}</span>`).join('')}</div>
+      <div class="doctor-info">
+        <div class="info-item">📍 <strong>${d.loc}</strong></div>
+        <div class="info-item">💰 <strong>${d.fee}</strong>/visit</div>
+        <div class="info-item">⭐ ${d.rating}</div>
+        <div class="${d.available?'available':'info-item'}">${d.available?'Available Today':'Not Available'}</div>
+      </div>
+      <div class="doctor-actions">
+        <button class="btn-appt" onclick="openAppt('${d.name}')">📅 Book Appointment</button>
+        <button class="btn-call" onclick="showToast('📞 Calling ${d.name}...')">📞 Call</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterDocs(spec, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderDoctors(spec==='all' ? doctors : doctors.filter(d=>d.spec===spec));
+}
+function doSearch() {
+  const spec = document.getElementById('specSelect').value;
+  const list = spec ? doctors.filter(d=>d.spec===spec) : doctors;
+  renderDoctors(list);
+  showToast('🔍 Showing results near you!');
+}
+function openAppt(name) {
+  document.getElementById('modal-doc-name').textContent = 'Doctor: '+name;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+function bookAppt() { closeModal(); showToast('✅ Appointment booked successfully! SMS sent.'); }
+function showToast(msg) {
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+renderDoctors(doctors);
+</script>
+</body>
+</html>
